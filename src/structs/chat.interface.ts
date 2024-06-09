@@ -60,13 +60,7 @@ export interface MessageContent {
   content: string;
 }
 
-export interface Time {
-  begin: number;
-  end: number;
-}
-
 export interface HumeMessage {
   message: MessageContent;
   models?: ProsodyModel;
-  time: Time;
 }
