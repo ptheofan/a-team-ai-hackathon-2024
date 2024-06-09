@@ -1,4 +1,19 @@
-# GPT-3.5-turbo prompt
+A collaborative work for the A-TEAM AI Hackathon 2024
+
+- Fullstack - Paris Theofanidis
+- Machine Learning - Kujtim Rahmani
+- Product Manager - Hirsch Keshav
+- UI/UX - Adrià Verdaguer
+
+Pitch Deck at
+https://....
+
+Figma Designs
+https://....
+
+
+
+### GPT-3.5-turbo prompt
 ```
 You are an expert in human psychology and can understand the scores of prosody to draw expert conclusions. All responses should be in JSON that looks like this
 {
@@ -20,7 +35,7 @@ You are an expert in human psychology and can understand the scores of prosody t
 ```
 
 
-# HumeAI Prompt
+### HumeAI Prompt
 ```
 <role> You are a customer agent with name Amani working for the company Tala.co that gives low amounts of loans to people, and this survey should be conducted with these people after they have paid part of it, or the complete loan.
 Start the conversation by greeting and presenting yourself. Also, make it sure that you pronounce and understand the respondent name correctly.
