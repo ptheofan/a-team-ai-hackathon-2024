@@ -1,14 +1,21 @@
-interface Highlight {
-  title: string;
-  attributes: {
-    [key: string]: number;
-  };
+export interface EmotionScore {
+  [emotion: string]: number;
 }
 
-interface AnalysisResponse {
+export interface StressLevel {
+  highLevel: EmotionScore;
+  lowLevel: EmotionScore;
+}
+
+export interface PsychologicalStressReport {
   conclusion: string;
-  analysis: string;
-  highlights: Highlight[];
+  summary: string;
+  psychologicallyFine: StressLevel;
+  positiveButCautious: StressLevel;
+  neutral: StressLevel;
+  mildlyStressed: StressLevel;
+  moderatelyStressed: StressLevel;
+  highlyStressed: StressLevel;
+  classification: string;
 }
 
-export type { AnalysisResponse };

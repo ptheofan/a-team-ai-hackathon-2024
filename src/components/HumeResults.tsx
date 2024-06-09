@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
 import { TMessageOwner } from './Message.tsx';
+import { PsychologicalStressReport } from '../structs/gpt.interface.ts';
+import { AttrWithStressLevel } from './AttrWithStressLevel.tsx';
 import { getChatGPTAnalysis } from '../api/gpt.ts';
-import { AnalysisResponse } from '../structs/gpt.interface.ts';
 
 export const HumeResults: React.FC = () => {
   const { humeChat } = useAppContext();
-  const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
+  const [analysis, setAnalysis] = useState<PsychologicalStressReport | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string|null>(null);
 
   useEffect(() => {
     const fetchAnalysis = async () => {
@@ -16,11 +17,15 @@ export const HumeResults: React.FC = () => {
       setError(null);
 
       try {
-        const chatGPTAnalysis = await getChatGPTAnalysis(humeChat);
-        setAnalysis(chatGPTAnalysis);
-        console.log('analysis', chatGPTAnalysis);
+        const result = await getChatGPTAnalysis(humeChat);
+        setAnalysis(result);
+        console.log('analysis', result);
       } catch (err) {
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An error occurred');
+        }
       }
 
       setLoading(false);
@@ -35,18 +40,29 @@ export const HumeResults: React.FC = () => {
         { loading && <div>Loading...</div> }
         { analysis && (
           <div>
-            <h1 className={ `text-xl` }>Analysis</h1>
-            <div className={ `text-sm` }>Conclusion</div>
-            <div className={ `text-xs` }>{ analysis.conclusion }</div>
-            <div className={ `text-sm` }>Summary</div>
-            <div className={ `text-xs` }>{ analysis.analysis }</div>
-            <div className={ `text-xl` }>Highlights</div>
-            { analysis.highlights.map((highlight, index) => (
-              <div key={index}>
-                <div>{ highlight.title }</div>
-                <div>{ JSON.stringify(highlight.attributes, null, 2) }</div>
-              </div>
-            )) }
+            <h1>Analysis</h1>
+            <br/>
+            <div>Classification</div>
+            <div>{ analysis.classification }</div>
+            <br/>
+            <div>Conclusion</div>
+            <div>{ analysis.conclusion }</div>
+            <br/>
+            <div>Summary</div>
+            <div>{ analysis.summary }</div>
+            <br/>
+            <AttrWithStressLevel attrName="Psychologically Fine" stressLevels={ analysis.psychologicallyFine }/>
+            <br/>
+            <AttrWithStressLevel attrName="Positive But Cautious" stressLevels={ analysis.positiveButCautious }/>
+            <br/>
+            <AttrWithStressLevel attrName="Neutral" stressLevels={ analysis.neutral }/>
+            <br/>
+            <AttrWithStressLevel attrName="Mildly Stressed" stressLevels={ analysis.mildlyStressed }/>
+            <br/>
+            <AttrWithStressLevel attrName="Moderately Stressed" stressLevels={ analysis.moderatelyStressed }/>
+            <br/>
+            <AttrWithStressLevel attrName="Highly Stressed" stressLevels={ analysis.highlyStressed }/>
+            <br/>
           </div>
         ) }
         { error && <div>Error: { error }</div> }
