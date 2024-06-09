@@ -1,10 +1,11 @@
 export interface EmotionScore {
-  [emotion: string]: number;
+  name: string;
+  score: number;
 }
 
 export interface StressLevel {
-  highLevel: EmotionScore;
-  lowLevel: EmotionScore;
+  highLevel: EmotionScore[];
+  lowLevel: EmotionScore[];
 }
 
 export interface PsychologicalStressReport {

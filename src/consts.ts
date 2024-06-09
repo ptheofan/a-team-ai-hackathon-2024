@@ -28,23 +28,29 @@ REPLY exclusively using the following JSON format as on the other end is a machi
 {
 "conclusion": "...the drawn conclusion here...",
 "summary": "Please give a description in less than 300 words how you classified",
-"psychologicallyFine":{
-"highLevel":[{Emotion1:score1},{Emotion2:core2}...],
-"lowLevel": [{Emotion1:score1},{Emotion2:core2}...],
-},
-"positiveButCautious":{"highLevel":[{Emotion1:score1},{Emotion2:core2}...],
-"lowLevel": [{Emotion1:score1},{Emotion2:core2}...],
-},
-"neutral":{"highLevel":[{Emotion1:score1},{Emotion2:core2}...],
-"lowLevel": [{Emotion1:score1},{Emotion2:core2}...],
-},
-"mildlyStressed":{"highLevel":[{Emotion1:score1},{Emotion2:core2}...],
-"lowLevel": [{Emotion1:score1},{Emotion2:core2}...],
-},
-"moderatelyStressed":{"highLevel":[{Emotion1:score1},{Emotion2:core2}...],
-"lowLevel": [{Emotion1:score1},{Emotion2:core2}...],
-},
-"highlyStressed":{"highLevel":[{Emotion1:score1},{Emotion2:core2}...],
-"lowLevel": [{Emotion1:score1},{Emotion2:core2}...],}
-"classification":"result"
+  "psychologicallyFine":{
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "positiveButCautious":{
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "neutral":{
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "mildlyStressed":{
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "moderatelyStressed":{
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "highlyStressed":{
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "classification":"result"
 }`

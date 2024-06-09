@@ -13,19 +13,23 @@ export const AttrWithStressLevel = ({ attrName, stressLevels }: IAttrWithStressL
       <h3>{attrName}</h3>
       <div>
         <h4>High Levels</h4>
-        {Object.entries(stressLevels.highLevel).map(([emotion, score], index) => (
-          <div key={index}>
-            {emotion}: {score}
-          </div>
-        ))}
+        {stressLevels && stressLevels.highLevel && Array.isArray(stressLevels.highLevel) && stressLevels.highLevel.length > 0 &&
+          stressLevels.highLevel.map((emotionScore, index) => (
+            <div key={index}>
+              {emotionScore.name}: {emotionScore.score}
+            </div>
+          ))
+        }
       </div>
       <div>
         <h4>Low Levels</h4>
-        {Object.entries(stressLevels.lowLevel).map(([emotion, score], index) => (
-          <div key={index}>
-            {emotion}: {score}
-          </div>
-        ))}
+        {stressLevels && stressLevels.lowLevel && Array.isArray(stressLevels.lowLevel) && stressLevels.lowLevel.length > 0 &&
+          stressLevels.lowLevel.map((emotionScore, index) => (
+            <div key={index}>
+              {emotionScore.name}: {emotionScore.score}
+            </div>
+          ))
+        }
       </div>
     </div>
   );
