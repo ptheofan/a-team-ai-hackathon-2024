@@ -1,7 +1,7 @@
 // export const openAIKey = import.meta.env.VITE_OPENAI_API_KEY
 // export const
 
-export const gptPrompt = `VITE_OPENAI_GPT_PROMPT=:You are a system that judges the Psychological Stress Level of an answer based on the extracted characteristics of the voice of the answer. Based on these characteristics and syntax, you have to classify the answer on the predefined classes
+export const stressPrompt = `You are a system that judges the Psychological Stress Level of an answer based on the extracted characteristics of the voice of the answer. Based on these characteristics and syntax, you have to classify the answer on the predefined classes
 Based on the scores and attributes provided below as well as the syntax of the answer, would you say the subject's Psychological Stress Level is which one of these six groupings:
 1. Psychologically Fine
 Indicators: High levels of calmness, contentment, satisfaction, and other positive emotions; low levels of stress, anxiety, and distress.
@@ -53,4 +53,45 @@ REPLY exclusively using the following JSON format as on the other end is a machi
     "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
   },
   "classification":"result"
+}`
+
+
+export const truthPrompt = `You are a system that judges the truthfulness of an answer (if the person is lying or telling the truth) based on the extracted characteristics of the voice of the answer. Based on these characteristics and syntax, you have to classify the answer on the predefined classes
+Based on the scores and provided  attributes provided, as well as the syntax of the answer, would you say the subject´s likeliness of lying is which one of these five categories: 
+1. Very Likely Not Lying:
+The emotional and voice sentiment analysis strongly suggests the subject is telling the truth. Indicators of honesty are high, with consistent positive and neutral emotional signals.
+2. Possibly Not Lying:
+The subject appears to be honest, but there are some minor inconsistencies or areas that could benefit from further verification. Generally positive or neutral emotional signals, with few, if any, stress indicators.
+3. Neutral/Unclear:
+The analysis is inconclusive. The subject's emotional and voice signals do not strongly indicate truthfulness or deceit. There is a balance of neutral emotions or mixed signals that require further investigation.
+4. Possibly Lying:
+The analysis suggests a potential deceit. There are notable stress indicators or emotional signals that align with lying, but more data and context are needed to confirm.
+5. Very Likely Lying:
+The emotional and vocal sentiment analysis strongly suggests the subject is lying. Indicators of deceit are high, with significant stress signals and inconsistencies.
+Structure the indicators in the format as follows:
+
+REPLY exclusively using the following JSON format as on the other end is a machine waiting to parse JSON:
+
+{
+  "veryLikelyNotLying": {
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "possiblyNotLying": {
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "neutralUnclear": {
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "possiblyLying": {
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  },
+  "veryLikelyLying": {
+    "highLevel":[{name: emotion1, score: score1},{name: emotion2, score: score2}...],
+    "lowLevel": [{name: emotion1, score: score1},{name: emotion2, score: score2}...]
+  }
+   "likelihood": ""
 }`

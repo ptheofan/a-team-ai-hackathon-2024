@@ -1,9 +1,7 @@
 import { HumeMessage } from '../structs/chat.interface.ts';
 import { TMessageOwner } from '../components/Message.tsx';
-import { PsychologicalStressReport } from '../structs/gpt.interface.ts';
-import { gptPrompt } from '../consts.ts';
 
-export const getChatGPTAnalysis = async (humeChat: HumeMessage[]): Promise<PsychologicalStressReport> => {
+export const getChatGPTAnalysis = async (prompt: string, humeChat: HumeMessage[]): Promise<string> => {
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -15,7 +13,7 @@ export const getChatGPTAnalysis = async (humeChat: HumeMessage[]): Promise<Psych
       messages: [
         {
           role: 'system',
-          content: gptPrompt,
+          content: prompt,
         },
         ...humeChat.map((message) => {
           let content;
@@ -46,5 +44,5 @@ export const getChatGPTAnalysis = async (humeChat: HumeMessage[]): Promise<Psych
 
   const data = await response.json();
   console.log(data.choices[0].message.content.replace("\n", ''));
-  return JSON.parse(data.choices[0].message.content.replace("\n", '')) as PsychologicalStressReport;
+  return data.choices[0].message.content.replace("\n", '');
 }

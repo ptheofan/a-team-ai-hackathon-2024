@@ -20,3 +20,12 @@ export interface PsychologicalStressReport {
   classification: string;
 }
 
+export interface TruthfulnessReport {
+  veryLikelyNotLying: StressLevel;
+  possiblyNotLying: StressLevel;
+  neutralUnclear: StressLevel;
+  possiblyLying: StressLevel;
+  veryLikelyLying: StressLevel;
+  likelihood: string;
+}
+
