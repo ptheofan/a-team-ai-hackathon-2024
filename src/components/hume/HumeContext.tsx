@@ -14,8 +14,7 @@ type HumeContextType = {
   connect: () => Promise<void>;
   disconnect: () => void;
   connected: boolean;
-  appendMessage: (role: Hume.empathicVoice.Role, content: string) => void;
-  chatRef: React.RefObject<HTMLDivElement>;
+  registerMessageCallback: (callback: (message: Hume.empathicVoice.SubscribeEvent) => void) => void;
   handleWebSocketErrorEvent: (error: Hume.empathicVoice.WebSocketError) => void;
   handleWebSocketMessageEvent: (message: Hume.empathicVoice.SubscribeEvent) => void;
 };
@@ -33,23 +32,13 @@ const HumeProvider: React.FC<HumeProviderProps> = ({ children }) => {
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
   const audioQueueRef = useRef<Blob[]>([]);
-  const chatRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Hume.empathicVoice.StreamSocket | null>(null);
   const isPlayingRef = useRef<boolean>(false);
+  const messageCallbackRef = useRef<(message: Hume.empathicVoice.SubscribeEvent) => void>();
 
   const mimeType: MimeType = useMemo(() => {
     const result = getBrowserSupportedMimeType();
     return result.success ? result.mimeType : MimeType.WEBM;
-  }, []);
-
-  const appendMessage = useCallback((role: Hume.empathicVoice.Role, content: string): void => {
-    const timestamp = new Date().toLocaleTimeString();
-    const messageEl = document.createElement('p');
-    const message = `<strong>[${timestamp}] ${role}:</strong> ${content}`;
-    messageEl.innerHTML = message;
-    if (chatRef.current) {
-      chatRef.current.appendChild(messageEl);
-    }
   }, []);
 
   const captureAudio = useCallback(async (): Promise<void> => {
@@ -111,30 +100,26 @@ const HumeProvider: React.FC<HumeProviderProps> = ({ children }) => {
   const handleWebSocketOpenEvent = useCallback(async (): Promise<void> => {
     setConnected(true);
     await captureAudio();
+
+    // Send a message as soon as the socket is connected and ready
+    if (socketRef.current) {
+      socketRef.current.sendTextInput('Hi.');
+      console.log('Initial message sent:', 'Hi.');
+    }
   }, [captureAudio]);
 
   const handleWebSocketMessageEvent = useCallback((message: Hume.empathicVoice.SubscribeEvent): void => {
-    switch (message.type) {
-      case 'chat_metadata':
-        setChatGroupId(message.chatGroupId);
-        break;
-      case 'user_message':
-      case 'assistant_message':
-        appendMessage(message.message.role, message.message.content ?? '');
-        break;
-      case 'audio_output':
-        // eslint-disable-next-line no-case-declarations
-        const blob = convertBase64ToBlob(message.data, mimeType);
-        audioQueueRef.current.push(blob);
-        if (!isPlayingRef.current) {
-          playAudio();
-        }
-        break;
-      case 'user_interruption':
-        stopAudio();
-        break;
+    if (messageCallbackRef.current) {
+      messageCallbackRef.current(message);
     }
-  }, [appendMessage, mimeType, playAudio, stopAudio]);
+    if (message.type === 'audio_output') {
+      const blob = convertBase64ToBlob(message.data, mimeType);
+      audioQueueRef.current.push(blob);
+      if (!isPlayingRef.current) {
+        playAudio();
+      }
+    }
+  }, [mimeType, playAudio]);
 
   const handleWebSocketErrorEvent = useCallback((error: Hume.empathicVoice.WebSocketError): void => {
     console.error('WebSocket error:', error);
@@ -142,7 +127,7 @@ const HumeProvider: React.FC<HumeProviderProps> = ({ children }) => {
 
   const handleWebSocketCloseEvent = useCallback(async (): Promise<void> => {
     if (connected) await connect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.info('WebSocket closed')
   }, [connected]);
 
   const connect = useCallback(async (): Promise<void> => {
@@ -150,6 +135,7 @@ const HumeProvider: React.FC<HumeProviderProps> = ({ children }) => {
       const newClient = new HumeClient({
         apiKey: import.meta.env.VITE_HUME_API_KEY || '',
         clientSecret: import.meta.env.VITE_HUME_CLIENT_SECRET || '',
+        environment: import.meta.env.VITE_HUME_PROMPT_ID || '',
       });
       setClient(newClient);
 
@@ -159,6 +145,7 @@ const HumeProvider: React.FC<HumeProviderProps> = ({ children }) => {
         onMessage: handleWebSocketMessageEvent,
         onError: handleWebSocketErrorEvent,
         onClose: handleWebSocketCloseEvent,
+        configId: import.meta.env.VITE_HUME_PROMPT_ID,
       });
     } else {
       socketRef.current = await client.empathicVoice.chat.connect({
@@ -167,6 +154,7 @@ const HumeProvider: React.FC<HumeProviderProps> = ({ children }) => {
         onMessage: handleWebSocketMessageEvent,
         onError: handleWebSocketErrorEvent,
         onClose: handleWebSocketCloseEvent,
+        configId: import.meta.env.VITE_HUME_PROMPT_ID,
       });
     }
   }, [
@@ -188,18 +176,20 @@ const HumeProvider: React.FC<HumeProviderProps> = ({ children }) => {
     setChatGroupId(undefined);
     socketRef.current?.close();
     socketRef.current = null;
-    appendMessage('system', 'Conversation ended.');
-  }, [appendMessage, audioStream, recorder, stopAudio]);
+  }, [audioStream, recorder, stopAudio]);
+
+  const registerMessageCallback = useCallback((callback: (message: Hume.empathicVoice.SubscribeEvent) => void) => {
+    messageCallbackRef.current = callback;
+  }, []);
 
   return (
     <HumeContext.Provider value={{
       connect,
       disconnect,
       connected,
-      appendMessage,
+      registerMessageCallback,
       handleWebSocketErrorEvent,
       handleWebSocketMessageEvent,
-      chatRef,
     }}>
       {children}
     </HumeContext.Provider>
